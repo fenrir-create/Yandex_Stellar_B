@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk, PayloadAction, nanoid } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  nanoid
+} from '@reduxjs/toolkit';
 import { orderBurgerApi } from '../../../utils/burger-api';
 import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
 
@@ -40,6 +45,9 @@ export const submitBurgerOrder = createAsyncThunk(
 const burgerBuilderSlice = createSlice({
   name: 'burgerBuilder',
   initialState: initialBuilderState,
+  selectors: {
+    selectConstructorState: (state) => state
+  },
   reducers: {
     addItem: {
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
@@ -49,9 +57,7 @@ const burgerBuilderSlice = createSlice({
           state.selectedItems.fillings.push(action.payload);
         }
       },
-      prepare: (item: TIngredient) => {
-        return { payload: { ...item, id: nanoid() } };
-      }
+      prepare: (item: TIngredient) => ({ payload: { ...item, id: nanoid() } })
     },
 
     removeItem: (state, action: PayloadAction<string>) => {
@@ -64,7 +70,8 @@ const burgerBuilderSlice = createSlice({
       const index = action.payload;
       if (index > 0) {
         const temp = state.selectedItems.fillings[index - 1];
-        state.selectedItems.fillings[index - 1] = state.selectedItems.fillings[index];
+        state.selectedItems.fillings[index - 1] =
+          state.selectedItems.fillings[index];
         state.selectedItems.fillings[index] = temp;
       }
     },
@@ -73,7 +80,8 @@ const burgerBuilderSlice = createSlice({
       const index = action.payload;
       if (index < state.selectedItems.fillings.length - 1) {
         const temp = state.selectedItems.fillings[index + 1];
-        state.selectedItems.fillings[index + 1] = state.selectedItems.fillings[index];
+        state.selectedItems.fillings[index + 1] =
+          state.selectedItems.fillings[index];
         state.selectedItems.fillings[index] = temp;
       }
     },
@@ -122,8 +130,9 @@ export const {
 } = burgerBuilderSlice.actions;
 
 // Селектор
-export const selectBurgerBuilder = (state: { burgerBuilder: TBurgerBuilderState }) =>
-  state.burgerBuilder;
+export const selectBurgerBuilder = (state: {
+  burgerBuilder: TBurgerBuilderState;
+}) => state.burgerBuilder;
 
 // Экспорт редьюсера
 export default burgerBuilderSlice.reducer;

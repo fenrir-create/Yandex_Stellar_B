@@ -4,24 +4,25 @@ import { TIngredient } from '@utils-types';
 
 // Тип состояния для ингредиентов
 type TIngredientsState = {
-  list: TIngredient[];
-  isFetching: boolean;
-  fetchError: string | null;
+  ingredients: TIngredient[];
+  isLoading: boolean;
+  errorMessage: string | null;
 };
 
 // Начальное состояние
 const initialIngredientsState: TIngredientsState = {
-  list: [],
-  isFetching: false,
-  fetchError: null
+  ingredients: [],
+  isLoading: false,
+  errorMessage: null
 };
 
 // Thunk для загрузки данных об ингредиентах
 export const fetchIngredients = createAsyncThunk(
-  'ingredients/fetchAll',
+  'ingredients/fetch',
   async (_, thunkAPI) => {
     try {
-      return await getIngredientsApi();
+      const ingredients = await getIngredientsApi();
+      return ingredients;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as Error).message);
     }
@@ -29,8 +30,8 @@ export const fetchIngredients = createAsyncThunk(
 );
 
 // Создание слайса ингредиентов
-const ingredientsDataSlice = createSlice({
-  name: 'ingredientsData',
+export const ingredientSlice = createSlice({
+  name: 'ingredients',
   initialState: initialIngredientsState,
   reducers: {},
   selectors: {
@@ -39,22 +40,22 @@ const ingredientsDataSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchIngredients.pending, (state) => {
-        state.isFetching = true;
-        state.fetchError = null;
+        state.isLoading = true;
+        state.errorMessage = null;
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
-        state.isFetching = false;
-        state.list = action.payload;
+        state.isLoading = false;
+        state.ingredients = action.payload;
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
-        state.isFetching = false;
-        state.fetchError = action.payload as string;
+        state.isLoading = false;
+        state.errorMessage = action.payload as string;
       });
   }
 });
 
 // Экспорт селектора
-export const { selectIngredientsState } = ingredientsDataSlice.selectors;
+export const { selectIngredientsState } = ingredientSlice.selectors;
 
 // Экспорт редьюсера
-export default ingredientsDataSlice.reducer;
+export default ingredientSlice.reducer;

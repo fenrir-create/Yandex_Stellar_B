@@ -11,7 +11,7 @@ type TState = {
 };
 
 // начальное состояние
-const initialFeedsState: TState = {
+export const initialFeedsState: TState = {
   items: [],
   totalCount: 0,
   todayCount: 0,
@@ -37,6 +37,9 @@ const feedsSlice = createSlice({
   name: 'feedsData',
   initialState: initialFeedsState,
   reducers: {},
+  selectors: {
+    selectFeedState: (state) => state
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFeeds.pending, (state) => {
@@ -57,6 +60,7 @@ const feedsSlice = createSlice({
 });
 
 // селектор
-export const selectFeeds = (state: { feedsData: TState }) => state.feedsData;
+export const { selectFeedState } = feedsSlice.selectors;
+// export const selectFeeds = (state: { feedsData: TState }) => state.feedsData;
 
 export default feedsSlice.reducer;

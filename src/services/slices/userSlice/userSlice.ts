@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   TRegisterData,
   TLoginData,
-  //TAuthResponse,
   loginUserApi,
   registerUserApi,
   getUserApi,
@@ -17,7 +16,7 @@ import { setCookie, deleteCookie } from '../../../utils/cookie';
 type TAuthState = {
   currentUser: TUser | null;
   isLoading: boolean;
-  error: string | null;
+  errorMessage: string | null;
   isAuthenticated: boolean;
   isAuthChecked: boolean;
   orders: TOrder[];
@@ -27,7 +26,7 @@ type TAuthState = {
 const initialState: TAuthState = {
   currentUser: null,
   isLoading: false,
-  error: null,
+  errorMessage: null,
   isAuthenticated: false,
   isAuthChecked: false,
   orders: []
@@ -65,14 +64,17 @@ export const login = createAsyncThunk(
 );
 
 // Получение текущего пользователя
-export const fetchUser = createAsyncThunk('auth/fetchUser', async (_, thunkAPI) => {
-  try {
-    const response = await getUserApi();
-    return response;
-  } catch (err) {
-    return thunkAPI.rejectWithValue((err as Error).message);
+export const fetchUser = createAsyncThunk(
+  'auth/fetchUser',
+  async (_, thunkAPI) => {
+    try {
+      const response = await getUserApi();
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as Error).message);
+    }
   }
-});
+);
 
 // Обновление профиля
 export const updateProfile = createAsyncThunk(
@@ -88,14 +90,17 @@ export const updateProfile = createAsyncThunk(
 );
 
 // Получение заказов пользователя
-export const fetchOrders = createAsyncThunk('auth/fetchOrders', async (_, thunkAPI) => {
-  try {
-    const orders = await getOrdersApi();
-    return orders;
-  } catch (err) {
-    return thunkAPI.rejectWithValue((err as Error).message);
+export const fetchOrders = createAsyncThunk(
+  'auth/fetchOrders',
+  async (_, thunkAPI) => {
+    try {
+      const orders = await getOrdersApi();
+      return orders;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as Error).message);
+    }
   }
-});
+);
 
 // Логаут
 export const logout = createAsyncThunk('auth/logout', async () => {
@@ -105,12 +110,12 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 });
 
 // Слайс авторизации
-const authSlice = createSlice({
+const userSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     clearError(state) {
-      state.error = null;
+      state.errorMessage = null;
     },
     resetAuth(state) {
       state.currentUser = null;
@@ -120,14 +125,14 @@ const authSlice = createSlice({
   },
   selectors: {
     selectAuthState: (state) => state,
-    selectAuthError: (state) => state.error
+    selectAuthError: (state) => state.errorMessage
   },
   extraReducers: (builder) => {
     builder
       // Регистрация
       .addCase(register.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.errorMessage = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -137,14 +142,14 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.errorMessage = action.payload as string;
         state.isAuthenticated = false;
       })
 
       // Логин
       .addCase(login.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.errorMessage = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -154,7 +159,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.errorMessage = action.payload as string;
         state.isAuthenticated = false;
       })
 
@@ -178,7 +183,7 @@ const authSlice = createSlice({
       // Обновление профиля
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.errorMessage = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -186,13 +191,13 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.errorMessage = action.payload as string;
       })
 
       // Получение заказов
       .addCase(fetchOrders.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.errorMessage = null;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -200,7 +205,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.errorMessage = action.payload as string;
       })
 
       // Логаут
@@ -209,14 +214,14 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.isAuthChecked = false;
         state.orders = [];
-        state.error = null;
+        state.errorMessage = null;
       });
   }
 });
 
 // Экспорт экшенов и селекторов
-export const { clearError, resetAuth } = authSlice.actions;
-export const { selectAuthState, selectAuthError } = authSlice.selectors;
+export const { clearError, resetAuth } = userSlice.actions;
+export const { selectAuthState, selectAuthError } = userSlice.selectors;
 
 // Экспорт редьюсера
-export default authSlice.reducer;
+export default userSlice.reducer;

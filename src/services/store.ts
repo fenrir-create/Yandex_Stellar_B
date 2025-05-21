@@ -4,7 +4,7 @@ import constructorSlice from './slices/constructorSlice/constructorSlice';
 import orderSlice from './slices/orderSlice/orderSlice';
 import feedSlice from './slices/feedSlice/feedSlice';
 import ingredientSlice from './slices/ingredientSlice/ingredientSlice';
-import authSlice from './slices/userSlice/userSlice';
+import userSlice from './slices/userSlice/userSlice';
 
 import {
   TypedUseSelectorHook,
@@ -13,11 +13,11 @@ import {
 } from 'react-redux';
 
 const rootReducer = combineReducers({
-  ingredientsData: ingredientSlice,
+  ingredient: ingredientSlice,
   order: orderSlice,
   constructorBurger: constructorSlice,
   feed: feedSlice,
-  user: authSlice
+  user: userSlice
 });
 const store = configureStore({
   reducer: rootReducer,
