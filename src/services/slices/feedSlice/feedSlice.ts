@@ -61,6 +61,5 @@ const feedsSlice = createSlice({
 
 // селектор
 export const { selectFeedState } = feedsSlice.selectors;
-// export const selectFeeds = (state: { feedsData: TState }) => state.feedsData;
 
 export default feedsSlice.reducer;

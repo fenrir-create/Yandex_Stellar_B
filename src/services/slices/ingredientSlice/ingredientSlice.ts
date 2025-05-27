@@ -3,14 +3,14 @@ import { getIngredientsApi } from '../../../utils/burger-api';
 import { TIngredient } from '@utils-types';
 
 // Тип состояния для ингредиентов
-type TIngredientsState = {
+export type TIngredientsState = {
   ingredients: TIngredient[];
   isLoading: boolean;
   errorMessage: string | null;
 };
 
 // Начальное состояние
-const initialIngredientsState: TIngredientsState = {
+export const initialState: TIngredientsState = {
   ingredients: [],
   isLoading: false,
   errorMessage: null
@@ -32,7 +32,7 @@ export const fetchIngredients = createAsyncThunk(
 // Создание слайса ингредиентов
 export const ingredientSlice = createSlice({
   name: 'ingredients',
-  initialState: initialIngredientsState,
+  initialState,
   reducers: {},
   selectors: {
     selectIngredientsState: (state) => state

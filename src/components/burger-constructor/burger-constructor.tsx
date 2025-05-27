@@ -1,19 +1,19 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
+import { RootState } from 'src/services/store';
 
 import { useSelector, useDispatch } from 'src/services/store';
 import { useNavigate } from 'react-router-dom';
 
 import {
-  selectBurgerBuilder,
   setRequestState,
   submitBurgerOrder,
   clearOrderData
 } from '../../services/slices/constructorSlice/constructorSlice';
 
-import { selectAuthState } from '../../services/slices/userSlice/userSlice';
-
+const selectBurgerBuilder = (state: RootState) => state.constructorBurger;
+const selectAuthState = (state: RootState) => state.user;
 export const BurgerConstructor: FC = () => {
   /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
   const dispatch = useDispatch();
