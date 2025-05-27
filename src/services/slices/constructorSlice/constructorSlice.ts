@@ -131,8 +131,8 @@ export const {
 
 // Селектор
 export const selectBurgerBuilder = (state: {
-  burgerBuilder: TBurgerBuilderState;
-}) => state.burgerBuilder;
+  constructorBurger: TBurgerBuilderState;
+}) => state.constructorBurger;
 
 // Экспорт редьюсера
 export default burgerBuilderSlice.reducer;

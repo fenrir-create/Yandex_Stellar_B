@@ -1,11 +1,21 @@
-import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from '../../services/store';
+import {
+  fetchUser,
+  updateProfile,
+  selectAuthState
+} from '../../services/slices/userSlice/userSlice';
+import { Preloader } from '@ui';
+import { ProfileUI } from '@ui-pages';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
+  const dispatch = useDispatch();
+
+  const { currentUser, isLoading } = useSelector((state) => state.user);
+
   const user = {
-    name: '',
-    email: ''
+    name: currentUser?.name || '',
+    email: currentUser?.email || ''
   };
 
   const [formValue, setFormValue] = useState({
@@ -15,20 +25,28 @@ export const Profile: FC = () => {
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
+    if (!currentUser) {
+      dispatch(fetchUser());
+    }
+  }, [dispatch, currentUser]);
+
+  useEffect(() => {
+    setFormValue((prev) => ({
+      ...prev,
+      name: user.name,
+      email: user.email
     }));
-  }, [user]);
+  }, [user.name, user.email]);
 
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
+    formValue.name !== user.name ||
+    formValue.email !== user.email ||
     !!formValue.password;
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    dispatch(updateProfile(formValue));
+    dispatch(fetchUser()); // обновим данные
   };
 
   const handleCancel = (e: SyntheticEvent) => {
@@ -41,11 +59,16 @@ export const Profile: FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    setFormValue((prev) => ({
+      ...prev,
+      [name]: value
     }));
   };
+
+  if (isLoading) {
+    return <Preloader />;
+  }
 
   return (
     <ProfileUI
@@ -56,6 +79,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };

@@ -31,7 +31,7 @@ export const fetchIngredients = createAsyncThunk(
 
 // Создание слайса ингредиентов
 export const ingredientSlice = createSlice({
-  name: 'ingredients',
+  name: 'ingredient',
   initialState,
   reducers: {},
   selectors: {
